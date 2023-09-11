@@ -35,5 +35,5 @@ jobs:
          uses: JamesIves/github-pages-deploy-action@v4.3.3
          with:
            ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-           BRANCH: gh-pages  
+           BRANCH: gh-pages # 部署到 gh-pages 分支(不能是main分支,否则会覆盖源码)
            FOLDER: dist # 生成的静态文件存放的地方

@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Form, Input } from 'antd';
 import { DynamicTable } from 'Src/components';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 const Demo = () => {
 
@@ -60,6 +61,7 @@ const Demo = () => {
     return (
         <div>
             <Button onClick={handleClick}>设置列表</Button>
+            <Link to="/docs/test.md">跳转到测试的md</Link>
             <Form form={form}>
                 <DynamicTable columns={mycolumns} name="dynamic-table" form={form} />
             </Form>
