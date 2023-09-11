@@ -14,7 +14,6 @@
     "dist": "node run-dist.js",
     "start": "npm run dll && npm run dev"
   },
-  "homepage": "https://lojaxin.github.io",
   "keywords": [],
   "author": "Lojiaxin",
   "license": "ISC",
