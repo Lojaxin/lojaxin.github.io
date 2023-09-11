@@ -18,12 +18,8 @@ jobs:
        # 拉取代码
        - name: Checkout
          uses: actions/checkout@v2
-        #  with:
-        #    persist-credentials: false
-       - name: Set up Node.js
-         - uses: actions/setup-node@v3
          with:
-           node-version: '16'
+           persist-credentials: false
        # install
        - name: Install
          run: |
