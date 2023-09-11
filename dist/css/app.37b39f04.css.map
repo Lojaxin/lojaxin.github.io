@@ -1,0 +1,1 @@
+{"version":3,"file":"css/app.37b39f04.css","mappings":"AAEA","sources":["webpack://install-webpack/./src/index.scss"],"sourcesContent":["$primary-color: #c3ff00;\n\nbody {\n    color: $primary-color;\n}"],"names":[],"sourceRoot":""}
