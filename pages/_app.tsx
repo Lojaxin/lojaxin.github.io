@@ -43,8 +43,9 @@ export default class LayoutApp extends App {
             }
         }
         //获取用户信息
-        const res = await http.request(options);
-        res?.data && store.dispatch({ type: TYPES.SET_USER_INFO, payload: res.data });
+        // const res = await http.request(options);
+        // res?.data && store.dispatch({ type: TYPES.SET_USER_INFO, payload: res.data });
+        store.dispatch({ type: TYPES.SET_USER_INFO, payload: { name: 'zd' } })
 
         let pageProps = {};
         if (Component.getInitialProps) {

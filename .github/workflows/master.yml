@@ -23,22 +23,6 @@ jobs:
           with:
             persist-credentials: false
 
-        - name: Cache dependencies
-          uses: actions/cache@v2
-          with:
-            path: |
-              ~/.npm
-              ~/.cache
-            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-node-
-            
-        - name: Setup node
-          uses: actions/setup-node@v3
-          with:
-            node-version: 16.13.x
-            cache: npm
-
         - name: Set up Docker Compose
           run: |
             sudo apt-get update
@@ -46,4 +30,4 @@ jobs:
         
         - name: Build and push Docker image
           run : |
-            docker-compose up --build
+            docker-compose up --d

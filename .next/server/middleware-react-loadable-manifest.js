@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST={"users/detail.tsx -> ../../components/UserDetail":{id:2534,files:["static/chunks/29-5abb094463d25730.js","static/chunks/260-a17e9aecaa18aa62.js","static/chunks/265.3e99bb8c777696d4.js","static/chunks/534.d7a3c5bd155ff271.js"]}};
