@@ -46,9 +46,9 @@ function UserList(props) {
     )
 }
 
-UserList.getInitialProps = async (ctx) => {
-    const result = await http.get('/api/users/queryAll');
-    return { userList: result?.data };
-}
+// UserList.getInitialProps = async (ctx) => {
+//     const result = await http.get('/api/users/queryAll');
+//     return { userList: result?.data };
+// }
 
 export default UserList;
