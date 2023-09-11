@@ -1,15 +1,20 @@
 name: CI
- on:
-   push:
-     branches:
+
+run-name: ${{ github.actor }} is learning GitHub Actions
+
+# 触发条件
+on:
+  push:
+    branches:
        - main
 
  # 任务
- jobs:
+jobs:
+    #任务名称
     app_deploy:
-     # 服务器环境：最新版 Ubuntu
-     runs-on: ubuntu-latest
-     steps:
+      # 服务器环境：最新版 Ubuntu
+      runs-on: ubuntu-latest
+      steps:
        # 拉取代码
        - name: Checkout
          uses: actions/checkout@v2
