@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": true,
+        "allowJs": true,
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "module": "es6",
+        "target": "eS5",
+        "jsx": "react",
+        "allowSyntheticDefaultImports": true,
+        "lib": [
+            "ES2015",
+            "ES2016",
+            "dom",
+            "ES2018.Promise"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "Src/*": [
+                "./src/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*",
+        "dist",
+        "public"
+    ],
+    "include": [
+        "src/*"
+    ]
+}
