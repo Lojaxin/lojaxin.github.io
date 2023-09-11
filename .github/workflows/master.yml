@@ -43,5 +43,5 @@ jobs:
        #  
         - name: Build and push Docker image
           run : |
-            docker-compose build
+            docker-compose build nestjs-build-app
             docker-compose up -d
