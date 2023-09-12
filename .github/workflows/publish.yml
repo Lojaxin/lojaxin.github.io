@@ -1,0 +1,38 @@
+
+name: Md Publish
+
+# 触发条件为 push
+on:
+  push:
+    branches:
+      - master
+    # 修改文件范围, 不在范围内不触发
+    # paths:
+    #   - 'src/**'
+ # 任务
+jobs:
+    #任务名称
+    app_deploy:
+      # 服务器环境：最新版 Ubuntu
+      runs-on: ubuntu-latest
+      # 任务步骤
+      steps:
+       # 拉取代码
+        - name: Checkout
+          uses: actions/checkout@v2
+          with:
+            persist-credentials: false
+
+        - name: Install and Build
+          run: |
+            npm install
+            npm run build
+        
+        - name: Publish
+          uses: JamesIves/github-pages-deploy-action@4.1.1
+          with:
+            ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+            BRANCH: gh-pages
+            folder: dist 
+            
+

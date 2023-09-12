@@ -1,34 +1,16 @@
 {
-  "name": "next-app",
+  "name": "lojaxin.github.io",
   "version": "1.0.0",
+  "description": "静态资源博客",
   "main": "index.js",
   "scripts": {
-    "server": "node server.js",
-    "dev": "next",
-    "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "build": "node ./index.js"
   },
-  "keywords": [],
-  "author": "jiaxin",
-  "license": "ISC",
-  "description": "使用nextjs开发",
+  "repository": "git@github.com:Lojaxin/lojaxin.github.io.git",
+  "author": "luojiaxin <luojiaxin@yunquna.com>",
+  "license": "MIT",
   "dependencies": {
-    "antd": "^5.8.4",
-    "axios": "^1.5.0",
-    "koa": "^2.14.2",
-    "koa-router": "^12.0.0",
-    "next": "^12.3.4",
-    "normalize.css": "^8.0.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-redux": "^8.1.2",
-    "redux": "^4.2.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.5.7",
-    "@types/react": "^18.2.21",
-    "babel-plugin-import": "^1.13.8",
-    "sass": "^1.66.1",
-    "typescript": "^5.2.2"
+    "express": "^4.18.2",
+    "markdown-it": "^13.0.1"
   }
 }
