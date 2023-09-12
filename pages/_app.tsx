@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import { getStoreByEnv, } from '../store';
 import { initialState } from '../store/reducers/pageDataReducer';
 import * as TYPES from '../store/action-types';
-import http from '../api/request';
 import 'normalize.css';
 import '../global.scss';
 
@@ -32,20 +31,10 @@ export default class LayoutApp extends App {
     static async getInitialProps({ Component, router, ctx }) {
 
         const store = getStoreByEnv({ pageData: initialState });
-        let options: any = {
-            url: "/api/users/queryById",
-            params: { id: '64e712d8f84c945b1096aefb' }
-        }
 
-        if (ctx.req && ctx.req.headers.cookie) {
-            options.headers = {
-                cookie: ctx.req.headers.cookie
-            }
+        if (ctx.req?.mdList) {
+            store.dispatch({ type: TYPES.SET_MD_DOCS, payload: ctx.req.mdList })
         }
-        //获取用户信息
-        // const res = await http.request(options);
-        // res?.data && store.dispatch({ type: TYPES.SET_USER_INFO, payload: res.data });
-        store.dispatch({ type: TYPES.SET_USER_INFO, payload: { name: 'zd' } })
 
         let pageProps = {};
         if (Component.getInitialProps) {
@@ -56,6 +45,7 @@ export default class LayoutApp extends App {
 
 
     componentDidMount(): void {
+
         this.routeChangeStart = () => {
             this.setState({ isLoading: true });
         }
