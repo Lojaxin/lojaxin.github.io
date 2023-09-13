@@ -8,7 +8,7 @@ body {
 #root {
     width: 100vw;
     height: 100vh;
-    min-height: 600px;
+    /* min-height: 600px; */
     display: flex;
 }
 
@@ -24,6 +24,8 @@ body {
     color: #fff;
     padding: 8px;
     width: 260px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .menu ul,
