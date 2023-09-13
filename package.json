@@ -1,7 +1,7 @@
 {
   "name": "lojaxin.github.io",
   "version": "1.0.0",
-  "description": "静态资源博客",
+  "description": "md打包生成html文件",
   "main": "index.js",
   "scripts": {
     "build": "node ./index.js"
@@ -10,7 +10,6 @@
   "author": "luojiaxin <luojiaxin@yunquna.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
     "markdown-it": "^13.0.1"
   }
 }

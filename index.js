@@ -3,7 +3,7 @@ const fs = require('fs');
 const Builder = require('./builder');
 const { copyFolderSync } = require('./utils');
 
-class Parent {
+class Hander {
     constructor(opts) {
         this.entry = opts.entry;
         this.menus = [];
@@ -29,7 +29,7 @@ class Parent {
         fs.mkdir(output, () => {
             //创建一个带有菜单的首页
             this.createMenuHtml(output);
-            //复制images
+            //复制到根文件
             copyFolderSync(path.join(__dirname, 'public/images'), path.join(output, 'images'));
             copyFolderSync(path.join(__dirname, 'public/css'), path.join(output, 'css'));
             copyFolderSync(path.join(__dirname, 'public/js'), path.join(output, 'js'));
@@ -57,11 +57,11 @@ class Parent {
     }
 }
 
-const builder = new Parent({
+const hander = new Hander({
     entry: 'notes'
 })
 
-builder.build();
+hander.build();
 
 
 // const builder = new Builder({
