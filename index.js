@@ -13,8 +13,8 @@ class Builder {
     constructor(opts) {
         this.entry = opts.entry;
         this.menus = [];
-        this.bundleName = "dist",
-            this.output = ""
+        this.bundleName = "dist";
+        this.output = ""
     }
 
     async start() {
@@ -38,6 +38,7 @@ class Builder {
         //复制到bundle的文件夹
         copyFolderSync(path.join(__dirname, 'public'), path.join(this.output, 'public'));
     }
+
     // 层序遍历  parentPath是父级的路径
     async traversal(root, parentPath = this.entry) {
         let index = 0;
