@@ -84,7 +84,7 @@ class Builder {
                         ${filePreFix}
                     </a>
                     ${isDir ? iterator(menu.childFiles) : ''}
-                <li>
+                </li>
                 `
             })
             str += '</ul>';
