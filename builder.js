@@ -10,15 +10,14 @@ const markdownIt = require('markdown-it')({
 
 class Builder {
     constructor(opts) {
-        this.outputPath = opts.outputPath;
-        this.inputPath = opts.inputPath;
+        this.inputPath = opts?.inputPath;
+        this.outputName = opts?.outputName;;
         this.mdList = [];
     }
 
     async build() {
-        const mdFiles = path.resolve(__dirname, this.inputPath);
-        const mdList = await fs.readdir(mdFiles);
-        this.mdList = mdList.map(file => path.join(mdFiles, file));
+        const mdList = await fs.readdir(this.inputPath);
+        this.mdList = mdList.map(file => path.join(this.inputPath, file));
         this.readFiles();
     }
 
@@ -36,23 +35,31 @@ class Builder {
         }
 
         const end = await dispatch();
-        if (end) { console.log('build success!') }
+        if (end) { console.log(`${this.outputName} build success!`) }
     }
 
     async renderMdToHtml(file, next) {
-        const dist = path.join(__dirname, 'dist');
+        const output = path.join(__dirname, this.outputName);
         try {
-            await fs.stat(dist)
+            await fs.stat(output)
         } catch (error) {
-            await fs.mkdir(dist);
+            await fs.mkdir(output);
         }
         const markdownContent = await fs.readFile(file, 'utf-8');
         // 将Markdown内容转换为HTML
-        const htmlContent = markdownIt.render(markdownContent);
-        // 写入HTML文件
+        const content = markdownIt.render(markdownContent);
+
         const fileExt = path.extname(file);
-        const fileName = `${path.basename(file, fileExt)}.html`;
-        await fs.writeFile(path.join(dist, fileName), htmlContent, 'utf-8');
+        const filePrefix = path.basename(file, fileExt);
+        const fileName = `${filePrefix}.html`;
+        // 写入HTML文件
+        const indexHtml = path.join(__dirname, this.outputName.split('/').shift(), 'index.html');
+        let htmlContent = await fs.readFile(indexHtml, 'utf-8');
+
+        htmlContent = htmlContent.replace('<!-- rendercontent -->', content)
+        htmlContent = htmlContent.replace('<title>笔记</title>', `<title>${filePrefix}</title>`)
+
+        await fs.writeFile(path.join(output, fileName), htmlContent, 'utf-8');
         return next()
     }
 }
