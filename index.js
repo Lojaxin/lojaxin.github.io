@@ -47,7 +47,7 @@ class Parent {
             <li class="submenu">
                 <a href="#">${menu.name}</a>
                 <ul>
-                    ${menu.childFiles.map(child => `<li><a href="./${menu.name}/${path.basename(child, '.md')}.html">${path.basename(child, '.md')}</a></li>`)}
+                    ${menu.childFiles.map(child => `<li><a href="/${menu.name}/${path.basename(child, '.md')}.html">${path.basename(child, '.md')}</a></li>`)}
                 </ul>
             </li>
         `);
