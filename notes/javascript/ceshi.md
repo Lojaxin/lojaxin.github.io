@@ -1,3 +1,3 @@
 this is test
 
-<img src="/_images/bird.jpg" width=500>
+<img src="/public/images/bird.jpg" width=500>
