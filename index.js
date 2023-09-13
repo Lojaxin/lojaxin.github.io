@@ -36,9 +36,7 @@ class Builder {
         console.log(res)
 
         //复制到bundle的文件夹
-        copyFolderSync(path.join(__dirname, 'public/_images'), path.join(this.output, '_images'));
-        copyFolderSync(path.join(__dirname, 'public/_css'), path.join(this.output, '_css'));
-        copyFolderSync(path.join(__dirname, 'public/_js'), path.join(this.output, '_js'));
+        copyFolderSync(path.join(__dirname, 'public'), path.join(this.output, 'public'));
     }
     // 层序遍历  parentPath是父级的路径
     async traversal(root, parentPath = this.entry) {
@@ -131,7 +129,7 @@ class Builder {
         //读取打包后index.html,生成自己的html
         const indexHtml = path.join(this.output, 'index.html');
         let htmlContent = await fs.readFile(indexHtml, 'utf-8');
-        htmlContent = htmlContent.replace('<title>笔记</title>', `< title > ${filePrefix}</ > `);
+        htmlContent = htmlContent.replace('<title>笔记</title>', `<title> ${filePrefix}</title> `);
         htmlContent = htmlContent.replace('<!-- renderContent -->', content);
 
         let writePath = parentPath.replace(this.entry, this.bundleName);
