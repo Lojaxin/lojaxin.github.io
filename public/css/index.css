@@ -30,13 +30,11 @@ body {
 
 .menu ul,
 .menu li {
-    text-align: center;
     color: #fff;
     margin: 0;
     padding: 0;
     list-style: none;
 }
-
 
 .menu li a {
     color: #fff;
@@ -47,11 +45,33 @@ body {
     display: none;
 }
 
-.submenu>a,
-.submenu>ul>li {
-    display: block;
-    padding: 10px 0;
+.menu .submenu {
+    padding: 0 8px;
 }
+
+.submenu>a {
+    display: block;
+    padding: 10px 0px;
+}
+
+.submenu>a[href="javacript:void(0);"] {
+    position: relative;
+}
+
+.submenu>a[href="javacript:void(0);"]::after {
+    content: ">";
+    font-size: 18px;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+}
+
+.submenu>.active[href="javacript:void(0);"]::after {
+    transform: translateY(-50%) rotate(90deg);
+}
+
 
 #content {
     flex: 1;
