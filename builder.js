@@ -1,5 +1,7 @@
 const path = require('path');
 const fs = require('fs').promises;
+const { copyFolderSync } = require('./utils');
+const { existsSync } = require('fs');
 
 const markdownIt = require('markdown-it')({
     html: true,
@@ -7,60 +9,139 @@ const markdownIt = require('markdown-it')({
     typographer: true
 });
 
-
 class Builder {
     constructor(opts) {
-        this.inputPath = opts?.inputPath;
-        this.outputName = opts?.outputName;;
-        this.mdList = [];
+        this.entry = opts.entry;
+        this.menus = [];
+        this.bundleName = opts.output || "dist";
+        this.outputPath = ""
     }
 
-    async build() {
-        const mdList = await fs.readdir(this.inputPath);
-        this.mdList = mdList.map(file => path.join(this.inputPath, file));
-        this.readFiles();
-    }
-
-    async readFiles() {
-        let index = -1;
-        const dispatch = (i = 0) => {
-            //防止同一个中间件的next()被调用多次
-            if (i <= index) throw new Error('next() called multiple times');
-            index = i;
-            //终止条件
-            if (i === this.mdList.length) {
-                return Promise.resolve(true);
-            }
-            return this.renderMdToHtml(this.mdList[i], () => dispatch(i + 1))
-        }
-
-        const end = await dispatch();
-        if (end) { console.log(`${this.outputName} build success!`) }
-    }
-
-    async renderMdToHtml(file, next) {
-        const output = path.join(__dirname, this.outputName);
+    async start() {
+        const rootPath = path.resolve(__dirname, this.entry);
+        const root = await fs.readdir(rootPath);
+        //获取所有的文件信息
+        this.menus = await this.traversal(root);
+        // console.dir(this.menus, { depth: 100 })
+        //创建一个bundle的文件夹 
+        this.outputPath = path.resolve(__dirname, this.bundleName);
         try {
-            await fs.stat(output)
-        } catch (error) {
-            await fs.mkdir(output);
+            await fs.mkdir(this.outputPath);
+        } catch (error) { }
+
+        await this.createMenuHtml();
+
+        //将所有md文件打包成html文件
+        const res = await this.build();
+        console.log(res)
+
+        //复制到bundle的文件夹
+        copyFolderSync(path.resolve(__dirname, 'public'), path.join(this.outputPath, 'public'));
+    }
+
+    // 层序遍历  parentPath是父级的路径
+    async traversal(root, parentPath = this.entry) {
+        let index = 0;
+        let result = [];
+        while (index < root.length) {
+            const dirName = root[index];
+            const dirPath = path.join(__dirname, parentPath, dirName);
+            const stat = await fs.stat(dirPath);
+            const parentName = parentPath.replace(this.entry, '');
+            if (stat.isDirectory()) {
+                const childFiles = await fs.readdir(dirPath);
+                const childDir = await this.traversal(childFiles, path.join(parentPath, dirName));
+                result.push({
+                    name: dirName,
+                    parentName,
+                    parentPath: path.dirname(dirPath),
+                    childFiles: childDir
+                })
+            } else {
+                result.push({
+                    name: dirName,
+                    parentName,
+                    parentPath: path.dirname(dirPath)
+                })
+            }
+            index++;
         }
-        const markdownContent = await fs.readFile(file, 'utf-8');
+        return result;
+    }
+
+    async createMenuHtml() {
+
+        const iterator = (menus = this.menus) => {
+            let str = '<ul>';
+            menus.forEach(menu => {
+                const isDir = menu.childFiles?.length > 0;
+                const fileExt = path.extname(menu.name);
+                const filePreFix = path.basename(menu.name, fileExt);
+                const parentName = `${menu.parentName}/${filePreFix}`;
+                str += `
+                <li class="submenu">
+                    <a href=${isDir ? 'javacript:void(0);' : `${parentName}.html`}>
+                        ${filePreFix}
+                    </a>
+                    ${isDir ? iterator(menu.childFiles) : ''}
+                </li>
+                `
+            })
+            str += '</ul>';
+            return str;
+        }
+        const menusStr = iterator();
+
+        let htmlContent = await fs.readFile(path.join(__dirname, 'public/index.html'), 'utf-8');
+        htmlContent = htmlContent.replace('<!-- renderMenus -->', menusStr)
+        await fs.writeFile(path.join(this.outputPath, 'index.html'), htmlContent);
+
+        console.log('index.html创建成功');
+    }
+
+    //深度遍历
+    build() {
+        let promises = [];
+        const depthMenu = (menus = this.menus) => {
+            for (const menu of menus) {
+                if (menu.childFiles?.length > 0) {
+                    depthMenu(menu.childFiles);
+                } else {
+                    promises.push(this.bundle(menu))
+                }
+            }
+        }
+        depthMenu();
+        return Promise.all(promises)
+    }
+
+    async bundle(menu) {
+        const { name, parentPath } = menu;
+        const fileExt = path.extname(name);
+        if (fileExt !== '.md') {
+            throw new Error('目前只能处理md文件');
+        }
+        const filePath = path.join(parentPath, name);
+        const filePrefix = path.basename(filePath, fileExt);
+        const markdownContent = await fs.readFile(filePath, 'utf-8');
         // 将Markdown内容转换为HTML
         const content = markdownIt.render(markdownContent);
 
-        const fileExt = path.extname(file);
-        const filePrefix = path.basename(file, fileExt);
-        const fileName = `${filePrefix}.html`;
-        // 写入HTML文件
-        const indexHtml = path.join(__dirname, this.outputName.split('/').shift(), 'index.html');
+        //读取打包后index.html,生成自己的html
+        const indexHtml = path.join(this.outputPath, 'index.html');
         let htmlContent = await fs.readFile(indexHtml, 'utf-8');
+        htmlContent = htmlContent.replace('<title>笔记</title>', `<title> ${filePrefix}</title> `);
+        htmlContent = htmlContent.replace('<!-- renderContent -->', content);
 
-        htmlContent = htmlContent.replace('<!-- rendercontent -->', content)
-        htmlContent = htmlContent.replace('<title>笔记</title>', `<title>${filePrefix}</title>`)
+        let writePath = parentPath.replace(this.entry, this.bundleName);
 
-        await fs.writeFile(path.join(output, fileName), htmlContent, 'utf-8');
-        return next()
+        if (!existsSync(writePath)) {
+            await fs.mkdir(writePath, { recursive: true })
+        }
+        // 写入HTML文件
+        const fileName = `${filePrefix}.html`;
+        await fs.writeFile(path.join(writePath, fileName), htmlContent, 'utf-8');
+        return `${path.join(writePath, fileName)} 创建完成`
     }
 }
 
