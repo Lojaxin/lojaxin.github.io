@@ -23,12 +23,13 @@ body {
     font-size: 10em;
     position: fixed;
     top: 45%;
-    left: 30%;
+    left: 500px;
     transform: translateY(-50%);
     background: url('/public/images/water.png') repeat-x;
     -webkit-background-clip: text;
     color: rgba(255, 255, 255, 0.1);
     animation: animate 12s linear infinite;
+    white-space: nowrap;
 }
 
 @keyframes animate {
