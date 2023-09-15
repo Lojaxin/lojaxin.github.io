@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var menuItems = document.querySelectorAll(".submenu");
     menuItems.forEach((li) => {
         var menuNode = li.querySelector('a');
-        if (menuNode.href.includes(path)) {
+        if (menuNode.href.includes(path) && path && path !== '/') {
             //匹配路由,默认打开所有父级的ul
             findAllParentULs(menuNode).forEach(ul => {
                 ul.style.display = "block";
