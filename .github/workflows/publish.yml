@@ -8,7 +8,7 @@ on:
       - master
     # 修改文件范围, 不在范围内不触发
     # paths:
-    #   - 'src/**'
+    #   - 'notes/**'
  # 任务
 jobs:
     #任务名称

@@ -40,7 +40,7 @@ class Builder {
         copyFolderSync(path.resolve(__dirname, 'public'), path.join(this.outputPath, 'public'));
     }
 
-    // 广度+深度遍历 
+    //深度遍历 
     async traversal(root, parentPath = this.entry) {
         let index = 0;
         let result = [];
