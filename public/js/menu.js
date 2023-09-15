@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     //获取url信息,默认打开所有父级菜单
     var path = window.location.pathname;
-    path = path.split('github.io/dist')[1];
     var menuItems = document.querySelectorAll(".submenu");
     menuItems.forEach((li) => {
         var menuNode = li.querySelector('a');
