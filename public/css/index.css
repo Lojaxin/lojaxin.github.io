@@ -12,6 +12,40 @@ body {
     display: flex;
 }
 
+#content>h1 {
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+    text-align: center;
+}
+
+#content .homeTitle {
+    font-size: 10em;
+    position: fixed;
+    top: 45%;
+    left: 30%;
+    transform: translateY(-50%);
+    background: url('/public/images/water.png') repeat-x;
+    -webkit-background-clip: text;
+    color: rgba(255, 255, 255, 0.1);
+    animation: animate 12s linear infinite;
+}
+
+@keyframes animate {
+    0% {
+        background-position: left 0 top 10%;
+    }
+
+    50% {
+        background-position: left 700px top 100%;
+    }
+
+    100% {
+        background-position: left 0 top 10%;
+        ;
+    }
+}
+
 .top {
     text-align: center;
     font-size: 16px;
@@ -46,7 +80,7 @@ body {
 }
 
 .menu .submenu {
-    padding: 0 8px;
+    padding-left: 8px;
 }
 
 .submenu>a {
