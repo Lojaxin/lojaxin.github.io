@@ -18,7 +18,7 @@ class Builder {
         this.outputPath = ""
     }
 
-    async start() {
+    async run() {
         const rootPath = path.resolve(__dirname, this.entry);
         const root = await fs.readdir(rootPath);
         //获取所有的文件信息
@@ -34,10 +34,12 @@ class Builder {
 
         //将所有md文件打包成html文件
         const res = await this.build();
-        console.log(res)
-
+        if (!res.some(item => !item)) {
+            console.log('所有md文件打包成功');
+        }
         //复制到bundle的文件夹
         copyFolderSync(path.resolve(__dirname, 'public'), path.join(this.outputPath, 'public'));
+        console.log('public文件夹复制成功,所有流程结束');
     }
 
     //深度遍历 
@@ -93,10 +95,7 @@ class Builder {
         }
         this.menusNodeStr = iterator();
 
-        let htmlContent = await fs.readFile(path.join(__dirname, 'public/index.html'), 'utf-8');
-        htmlContent = htmlContent.replace('<!-- renderTitle -->', '首页');
-        htmlContent = htmlContent.replace('<!-- renderMenus -->', this.menusNodeStr);
-        htmlContent = htmlContent.replace('<!-- renderContent -->', '<h1 class=homeTitle>Welcome!</h1>');
+        const htmlContent = await this.transRenderContent();
         await fs.writeFile(path.join(this.outputPath, 'index.html'), htmlContent);
 
         console.log('index.html创建成功');
@@ -121,21 +120,19 @@ class Builder {
     async bundle(menu) {
         const { name, parentPath } = menu;
         const fileExt = path.extname(name);
-        if (fileExt !== '.md') {
+        if (fileExt && fileExt !== '.md') {
             throw new Error('目前只能处理.md文件');
         }
         const filePath = path.join(parentPath, name);
+        const stat = await fs.stat(filePath);
+        if (stat.isDirectory()) {
+            return fs.mkdir(path.join(parentPath.replace(this.entry, this.bundleName), name), { recursive: true })
+        }
         const filePrefix = path.basename(filePath, fileExt);
         const markdownContent = await fs.readFile(filePath, 'utf-8');
         // 将Markdown内容转换为HTML
         const content = markdownIt.render(markdownContent);
-
-        //读public的index.html,生成自己的html
-        const indexHtml = path.resolve(__dirname, 'public', 'index.html');
-        let htmlContent = await fs.readFile(indexHtml, 'utf-8');
-        htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', filePrefix);
-        htmlContent = htmlContent.replace('<!-- renderMenus -->', this.menusNodeStr)
-        htmlContent = htmlContent.replace('<!-- renderContent -->', content);
+        const htmlContent = await this.transRenderContent(content, filePrefix);
 
         let writePath = parentPath.replace(this.entry, this.bundleName);
 
@@ -145,7 +142,16 @@ class Builder {
         // 写入HTML文件
         const fileName = `${filePrefix}.html`;
         await fs.writeFile(path.join(writePath, fileName), htmlContent, 'utf-8');
-        return `${path.join(writePath, fileName)} 打包完成`
+        return `${path.join(writePath, fileName)}`
+    }
+
+    //替换html内容
+    async transRenderContent(renderContent, renderTitle) {
+        let htmlContent = await fs.readFile(path.resolve(__dirname, 'public/index.html'), 'utf-8');
+        htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', renderTitle || '首页');
+        htmlContent = htmlContent.replace('<!-- renderMenus -->', this.menusNodeStr)
+        htmlContent = htmlContent.replace('<!-- renderContent -->', renderContent || '<h1 class=homeTitle>Welcome!</h1>');
+        return htmlContent;
     }
 }
 

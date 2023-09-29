@@ -5,4 +5,4 @@ const build = new Builder({
     output: 'dist'
 })
 
-build.start();
+build.run();
