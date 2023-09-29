@@ -95,7 +95,7 @@ class Builder {
         }
         this.menusNodeStr = iterator();
 
-        const htmlContent = await this.transRenderContent();
+        const htmlContent = await this.transRenderContent('<h1 class=homeTitle>Welcome!</h1>');
         await fs.writeFile(path.join(this.outputPath, 'index.html'), htmlContent);
 
         console.log('index.html创建成功');
@@ -150,7 +150,7 @@ class Builder {
         let htmlContent = await fs.readFile(path.resolve(__dirname, 'public/index.html'), 'utf-8');
         htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', renderTitle || '首页');
         htmlContent = htmlContent.replace('<!-- renderMenus -->', this.menusNodeStr)
-        htmlContent = htmlContent.replace('<!-- renderContent -->', renderContent || '<h1 class=homeTitle>Welcome!</h1>');
+        htmlContent = htmlContent.replace('<!-- renderContent -->', renderContent);
         return htmlContent;
     }
 }
