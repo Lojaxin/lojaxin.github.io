@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
     menuItems.forEach((li) => {
         var menuNode = li.querySelector('a');
         if (menuNode.href.includes(path) && path && path !== '/') {
+            //匹配选中的菜单
+            menuNode.parentNode.classList.add('submenu-active');
             //匹配路由,默认打开所有父级的ul
             findAllParentULs(menuNode).forEach(ul => {
                 ul.style.display = "block";

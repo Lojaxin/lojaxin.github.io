@@ -22,7 +22,7 @@ class Builder {
         const rootPath = path.resolve(__dirname, this.entry);
         const root = await fs.readdir(rootPath);
         //获取所有的文件信息
-        this.menus = await this.traversal(root);
+        this.menus = await this.depthDir(root);
         // console.dir(this.menus, { depth: 100 })
         //创建一个bundle的文件夹 
         this.outputPath = path.resolve(__dirname, this.bundleName);
@@ -43,7 +43,7 @@ class Builder {
     }
 
     //深度遍历 
-    async traversal(root, parentPath = this.entry) {
+    async depthDir(root, parentPath = this.entry) {
         let index = 0;
         let result = [];
         while (index < root.length) {
@@ -54,7 +54,7 @@ class Builder {
             if (stat.isDirectory()) {
                 const childFiles = await fs.readdir(dirPath);
                 //
-                const childDir = await this.traversal(childFiles, path.join(parentPath, dirName));
+                const childDir = await this.depthDir(childFiles, path.join(parentPath, dirName));
                 result.push({
                     name: dirName,
                     parentName,
@@ -74,46 +74,57 @@ class Builder {
     }
 
     async createMenuHtml() {
-        const iterator = (menus = this.menus) => {
-            let str = '<ul>';
-            menus.forEach(menu => {
-                const isDir = menu.childFiles?.length > 0;
-                const fileExt = path.extname(menu.name);
-                const filePreFix = path.basename(menu.name, fileExt);
-                const parentName = `${menu.parentName}/${filePreFix}`;
-                str += `
-                <li class="submenu">
-                    <a href=${isDir ? 'javacript:void(0);' : `${parentName}.html`}>
-                        ${filePreFix}
-                    </a>
-                    ${isDir ? iterator(menu.childFiles) : ''}
-                </li>
-                `
-            })
-            str += '</ul>';
-            return str;
+        this.menusNodeStr = '<ul>';
+        const joinMenus = (menu) => {
+            const isDir = menu.childFiles?.length > 0;
+            const fileExt = path.extname(menu.name);
+            const filePreFix = path.basename(menu.name, fileExt);
+            const parentName = `${menu.parentName}/${filePreFix}`;
+            this.menusNodeStr += `
+            <li class="submenu">
+                <a href=${isDir ? 'javacript:void(0);' : `${parentName}.html`}>
+                    ${filePreFix}
+                </a>
+                ${isDir ? this.iterator(menu.childFiles) : ''}
+            </li>
+            `
         }
-        this.menusNodeStr = iterator();
-
+        this.iterator(this.menus, joinMenus);
+        this.menusNodeStr += '</ul>';
         const htmlContent = await this.transRenderContent('<h1 class=homeTitle>Welcome!</h1>');
         await fs.writeFile(path.join(this.outputPath, 'index.html'), htmlContent);
 
         console.log('index.html创建成功');
     }
 
+    //迭代器
+    iterator(menus = this.menus, doFn) {
+        for (const menu of menus) {
+            if (menu.childFiles?.length) {
+                this.iterator.call(this, menu.childFiles, doFn);
+            } else {
+                //dosomething
+                doFn(menu)
+            }
+        }
+    }
+
+    //替换html内容
+    async transRenderContent(renderContent, renderTitle) {
+        let htmlContent = await fs.readFile(path.resolve(__dirname, 'public/index.html'), 'utf-8');
+        htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', renderTitle || '首页');
+        htmlContent = htmlContent.replace('<!-- renderMenus -->', this.menusNodeStr)
+        htmlContent = htmlContent.replace('<!-- renderContent -->', renderContent);
+        return htmlContent;
+    }
+
     //深度遍历,将md文件打包成html
     build() {
         let promises = [];
-        const depthMenu = (menus = this.menus) => {
-            for (const menu of menus) {
-                if (menu.childFiles?.length > 0) {
-                    depthMenu(menu.childFiles);
-                } else {
-                    promises.push(this.bundle(menu))
-                }
-            }
+        const pushPromise = (menu) => {
+            promises.push(this.bundle(menu))
         }
-        depthMenu();
+        this.iterator(this.menus, pushPromise);
         return Promise.all(promises)
     }
 
@@ -143,15 +154,6 @@ class Builder {
         const fileName = `${filePrefix}.html`;
         await fs.writeFile(path.join(writePath, fileName), htmlContent, 'utf-8');
         return `${path.join(writePath, fileName)}`
-    }
-
-    //替换html内容
-    async transRenderContent(renderContent, renderTitle) {
-        let htmlContent = await fs.readFile(path.resolve(__dirname, 'public/index.html'), 'utf-8');
-        htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', renderTitle || '首页');
-        htmlContent = htmlContent.replace('<!-- renderMenus -->', this.menusNodeStr)
-        htmlContent = htmlContent.replace('<!-- renderContent -->', renderContent);
-        return htmlContent;
     }
 }
 
