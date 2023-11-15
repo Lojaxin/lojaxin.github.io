@@ -28,7 +28,8 @@ yarn add webpack webpack-cli webpack-merge babel-loader babel-preset-xin @babel/
 
 ## 三.开发
 -   1.创建服务
-```index.js
+```javascript
+//index.js
 import express from 'express';
 import render from './src/ssr/render-middleware';
 
@@ -41,12 +42,13 @@ server.listen(3000, () => {
 });
 ```
 -   2.编写路由中间件
-```render-middleware.js
+```javascript
+//render-middleware.js
 
 ```
--   3.commonjs 不支持ES6的语法,还需要index.js的代码也需要使用babel转译;
-```
-touch webpack.node.babel.js
+-   3.commonjs 不支持ES6的语法,index.js的代码也需要使用babel转译;
+```javascript
+//touch webpack.node.babel.js
 
 import path from 'path';
 import { merge } from 'webpack-merge';

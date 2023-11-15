@@ -112,7 +112,7 @@ class Builder {
     //替换html内容
     async transRenderContent(renderContent, renderTitle) {
         let htmlContent = await fs.readFile(path.resolve(__dirname, 'public/index.html'), 'utf-8');
-        htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', renderTitle || '首页');
+        htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', renderTitle);
         htmlContent = htmlContent.replace('<!-- renderMenus -->', this.menusNodeStr)
         htmlContent = htmlContent.replace('<!-- renderContent -->', renderContent);
         return htmlContent;

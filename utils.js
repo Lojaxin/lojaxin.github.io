@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
+/** 同步复制文件 */
 function copyFolderSync(source, target) {
     // 确保目标文件夹存在
     if (!fs.existsSync(target)) {

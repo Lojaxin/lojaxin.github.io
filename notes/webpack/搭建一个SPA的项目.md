@@ -24,7 +24,8 @@ npm i react react-dom react-router-dom -S
 ```
 touch webpack.config.js && touch babel.confi.js
 ```
-```webpack.config.js
+```javascript
+//webpack.config.js
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -109,7 +110,8 @@ module exports = {
     }
 }
 ```
-```babel.config.js
+```javascript
+//babel.config.js
 module.exports = {
     presets: ['babel-preset-xin']
 };
@@ -120,7 +122,8 @@ module.exports = {
 ```
 touch main.js && mkdir src;
 ```
-```main.js
+```javascript
+//main.js
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import routes from './routes';
