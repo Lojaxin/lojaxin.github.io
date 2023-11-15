@@ -16,13 +16,6 @@
             </div>
             <ul>
             <li class="submenu">
-                <a href=/javascript/typescript/基础.html>
-                    基础
-                </a>
-                
-            </li>
-            
-            <li class="submenu">
                 <a href=/webpack/搭建一个SPA的项目.html>
                     搭建一个SPA的项目
                 </a>
@@ -32,13 +25,6 @@
             <li class="submenu">
                 <a href=/webpack/搭建一个SSR的项目.html>
                     搭建一个SSR的项目
-                </a>
-                
-            </li>
-            
-            <li class="submenu">
-                <a href=/随想所记/测试图片静态文件.html>
-                    测试图片静态文件
                 </a>
                 
             </li>
@@ -76,7 +62,8 @@ yarn add webpack webpack-cli webpack-merge babel-loader babel-preset-xin @babel/
 <ul>
 <li>1.创建服务</li>
 </ul>
-<pre><code class="language-index.js">import express from 'express';
+<pre><code class="language-javascript">//index.js
+import express from 'express';
 import render from './src/ssr/render-middleware';
 
 const server = express();
@@ -90,12 +77,13 @@ server.listen(3000, () =&gt; {
 <ul>
 <li>2.编写路由中间件</li>
 </ul>
-<pre><code class="language-render-middleware.js">
+<pre><code class="language-javascript">//render-middleware.js
+
 </code></pre>
 <ul>
-<li>3.commonjs 不支持ES6的语法,还需要index.js的代码也需要使用babel转译;</li>
+<li>3.commonjs 不支持ES6的语法,index.js的代码也需要使用babel转译;</li>
 </ul>
-<pre><code>touch webpack.node.babel.js
+<pre><code class="language-javascript">//touch webpack.node.babel.js
 
 import path from 'path';
 import { merge } from 'webpack-merge';

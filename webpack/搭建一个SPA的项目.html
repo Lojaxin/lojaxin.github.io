@@ -16,13 +16,6 @@
             </div>
             <ul>
             <li class="submenu">
-                <a href=/javascript/typescript/基础.html>
-                    基础
-                </a>
-                
-            </li>
-            
-            <li class="submenu">
                 <a href=/webpack/搭建一个SPA的项目.html>
                     搭建一个SPA的项目
                 </a>
@@ -32,13 +25,6 @@
             <li class="submenu">
                 <a href=/webpack/搭建一个SSR的项目.html>
                     搭建一个SSR的项目
-                </a>
-                
-            </li>
-            
-            <li class="submenu">
-                <a href=/随想所记/测试图片静态文件.html>
-                    测试图片静态文件
                 </a>
                 
             </li>
@@ -74,7 +60,8 @@ npm init
 <h2>二.编写webpack配置 &amp; babel配置</h2>
 <pre><code>touch webpack.config.js &amp;&amp; touch babel.confi.js
 </code></pre>
-<pre><code class="language-webpack.config.js">const path = require('path');
+<pre><code class="language-javascript">//webpack.config.js
+const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module exports = {
@@ -158,7 +145,8 @@ module exports = {
     }
 }
 </code></pre>
-<pre><code class="language-babel.config.js">module.exports = {
+<pre><code class="language-javascript">//babel.config.js
+module.exports = {
     presets: ['babel-preset-xin']
 };
 
@@ -166,7 +154,8 @@ module exports = {
 <h2>三.创建入口文件 &amp; 编写路由和组件</h2>
 <pre><code>touch main.js &amp;&amp; mkdir src;
 </code></pre>
-<pre><code class="language-main.js">import { createRoot } from 'react-dom/client';
+<pre><code class="language-javascript">//main.js
+import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import routes from './routes';
 
