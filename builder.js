@@ -2,11 +2,23 @@ const path = require('path');
 const fs = require('fs').promises;
 const { copyFolderSync } = require('./utils');
 const { existsSync } = require('fs');
+const hljs = require('highlight.js');
 
 const markdownIt = require('markdown-it')({
     html: true,
     linkify: true,
-    typographer: true
+    typographer: true,
+    highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return '<pre class="hljs"><code>' +
+                    hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                    '</code></pre>';
+            } catch (__) { }
+        }
+
+        return '<pre class="hljs"><code>' + markdownIt.utils.escapeHtml(str) + '</code></pre>';
+    }
 });
 
 class Builder {
@@ -23,7 +35,7 @@ class Builder {
         const root = await fs.readdir(rootPath);
         //获取所有的文件信息
         this.menus = await this.depthDir(root);
-        // console.dir(this.menus, { depth: 100 })
+        console.dir(this.menus, { depth: 100 })
         //创建一个bundle的文件夹 
         this.outputPath = path.resolve(__dirname, this.bundleName);
         try {
@@ -54,13 +66,15 @@ class Builder {
             if (stat.isDirectory()) {
                 const childFiles = await fs.readdir(dirPath);
                 //
-                const childDir = await this.depthDir(childFiles, path.join(parentPath, dirName));
-                result.push({
-                    name: dirName,
-                    parentName,
-                    parentPath: path.dirname(dirPath),
-                    childFiles: childDir
-                })
+                if (childFiles.length) {
+                    const childDir = await this.depthDir(childFiles, path.join(parentPath, dirName));
+                    result.push({
+                        name: dirName,
+                        parentName,
+                        parentPath: path.dirname(dirPath),
+                        childFiles: childDir
+                    })
+                }
             } else {
                 result.push({
                     name: dirName,
@@ -74,23 +88,25 @@ class Builder {
     }
 
     async createMenuHtml() {
-        this.menusNodeStr = '<ul>';
-        const joinMenus = (menu) => {
-            const isDir = menu.childFiles?.length > 0;
-            const fileExt = path.extname(menu.name);
-            const filePreFix = path.basename(menu.name, fileExt);
-            const parentName = `${menu.parentName}/${filePreFix}`;
-            this.menusNodeStr += `
-            <li class="submenu">
-                <a href=${isDir ? 'javacript:void(0);' : `${parentName}.html`}>
-                    ${filePreFix}
-                </a>
-                ${isDir ? this.iterator(menu.childFiles) : ''}
-            </li>
-            `
+        const recursion = (menus) => {
+            let str = '';
+            for (const menu of menus) {
+                const isDir = menu.childFiles?.length;
+                const fileExt = path.extname(menu.name);
+                const filePreFix = path.basename(menu.name, fileExt);
+                const parentName = `${menu.parentName}/${filePreFix}`;
+                str += `
+                <li class="submenu">
+                    <a href=${isDir ? 'javacript:void(0);' : `${parentName}.html`}>
+                        ${filePreFix}
+                    </a>
+                    ${isDir ? `<ul>${recursion(menu.childFiles)}</ul>` : ''}
+                </li>
+                `
+            }
+            return str;
         }
-        this.iterator(this.menus, joinMenus);
-        this.menusNodeStr += '</ul>';
+        this.menusNodeStr = `<ul>${recursion(this.menus)}</ul>`;
         const htmlContent = await this.transRenderContent('<h1 class=homeTitle>Welcome!</h1>');
         await fs.writeFile(path.join(this.outputPath, 'index.html'), htmlContent);
 
@@ -112,7 +128,7 @@ class Builder {
     //替换html内容
     async transRenderContent(renderContent, renderTitle) {
         let htmlContent = await fs.readFile(path.resolve(__dirname, 'public/index.html'), 'utf-8');
-        htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', renderTitle);
+        htmlContent = htmlContent.replaceAll('<!-- renderTitle -->', renderTitle || '');
         htmlContent = htmlContent.replace('<!-- renderMenus -->', this.menusNodeStr)
         htmlContent = htmlContent.replace('<!-- renderContent -->', renderContent);
         return htmlContent;

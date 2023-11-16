@@ -11,7 +11,7 @@
 
 #### 3.进入开发
 -   1.先创建一个对象,把资源目录和产出目录给他;
-```
+```javascript
 const Builder = require('./Builder');
 const builder = new Builder({
     entry:'notes',
@@ -23,7 +23,7 @@ builder.start();
 -   2.找到资源目录,读取这个资源目录下的文件,这就又产生了两个问题;
     -   1.目录下有不可能都是文件吧,不然咋分类,这就需要去递归文件夹,统计信息;
     -   2.文件操作是直接用`fs`还是`fs.promise`? 同步操作都是回调,会形成">"代码,官方都出异步了,肯定是优先异步;
-```
+```javascript
 async depthDir(root, parentPath = this.entry) {
     let index = 0;
     let result = [];
@@ -34,13 +34,15 @@ async depthDir(root, parentPath = this.entry) {
         const parentName = parentPath.replace(this.entry, '');
         if (stat.isDirectory()) {
             const childFiles = await fs.readdir(dirPath);
-            const childDir = await this.depthDir(childFiles, path.join(parentPath, dirName));
-            result.push({
-                name: dirName,
-                parentName,
-                parentPath: path.dirname(dirPath),
-                childFiles: childDir
-            })
+            if (childFiles.length) {
+                const childDir = await this.depthDir(childFiles, path.join(parentPath, dirName));
+                result.push({
+                    name: dirName,
+                    parentName,
+                    parentPath: path.dirname(dirPath),
+                    childFiles: childDir
+                })
+            }
         } else {
             result.push({
                 name: dirName,
@@ -56,38 +58,29 @@ async depthDir(root, parentPath = this.entry) {
 ```
 -   3.创建首页文件,递归资源信息作为菜单,字符串拼接操作;
 
-```
-iterator(menus = this.menus, doFn) {
+```javascript
+const recursion = (menus) => {
+    let str = '';
     for (const menu of menus) {
-        if (menu.childFiles?.length) {
-            this.iterator.call(this, menu.childFiles, doFn);
-        } else {
-            //dosomething
-            doFn(menu)
-        }
-    }
-}
-
-    this.menusNodeStr = '<ul>';
-    const joinMenus = (menu) => {
-        const isDir = menu.childFiles?.length > 0;
+        const isDir = menu.childFiles?.length;
         const fileExt = path.extname(menu.name);
         const filePreFix = path.basename(menu.name, fileExt);
         const parentName = `${menu.parentName}/${filePreFix}`;
-        this.menusNodeStr += `
+        str += `
         <li class="submenu">
             <a href=${isDir ? 'javacript:void(0);' : `${parentName}.html`}>
                 ${filePreFix}
             </a>
-            ${isDir ? this.iterator(menu.childFiles) : ''}
+            ${isDir ? `<ul>${recursion(menu.childFiles)}</ul>` : ''}
         </li>
         `
     }
-    this.iterator(this.menus, joinMenus);
-    this.menusNodeStr += '</ul>';
+    return str;
+}
+this.menusNodeStr = `<ul>${recursion(this.menus)}</ul>`;
 ```
 -   4.继续遍历之前的生成的菜单信息,创建多个异步打包任务
-```
+```javascript
 build() {
     let promises = [];
     const pushPromise = (menu) => {
@@ -99,9 +92,8 @@ build() {
 ```
 -   5.copy静态文件目录,因为css,js,images都放在这里;
 
-```
+```javascript
  copyFolderSync(path.resolve(__dirname, 'public'), path.join(this.outputPath, 'public'));
-
 ```
 
 -   6.将build后的产出文件发布到github;

@@ -141,7 +141,8 @@ const App = () => {
 const root = createRoot(document.querySelector('#root'));
 root.render(<App />);
 ```
-```routes.js
+```javascript
+//routes.js
 import React from 'react';
 //import Home from 'Src/pages/home';
 
