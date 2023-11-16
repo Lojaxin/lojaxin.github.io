@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>搭建一个SSR的项目</title>
     <link rel="stylesheet" href="/public/css/index.css">
+    <link rel="stylesheet" href="/public/css/monokai-sublime.min.css">
 </head>
 
 <body>
@@ -15,31 +16,52 @@
                 不止于前端
             </div>
             <ul>
-            <li class="submenu">
-                <a href=/webpack/搭建一个SPA的项目.html>
-                    搭建一个SPA的项目
-                </a>
+                <li class="submenu">
+                    <a href=javacript:void(0);>
+                        nodejs
+                    </a>
+                    <ul>
+                <li class="submenu">
+                    <a href=/nodejs/常用内置模块.html>
+                        常用内置模块
+                    </a>
+                    
+                </li>
+                </ul>
+                </li>
                 
-            </li>
-            
-            <li class="submenu">
-                <a href=/webpack/搭建一个SSR的项目.html>
-                    搭建一个SSR的项目
-                </a>
+                <li class="submenu">
+                    <a href=javacript:void(0);>
+                        webpack
+                    </a>
+                    <ul>
+                <li class="submenu">
+                    <a href=/webpack/搭建一个SPA的项目.html>
+                        搭建一个SPA的项目
+                    </a>
+                    
+                </li>
                 
-            </li>
-            </ul>
+                <li class="submenu">
+                    <a href=/webpack/搭建一个SSR的项目.html>
+                        搭建一个SSR的项目
+                    </a>
+                    
+                </li>
+                </ul>
+                </li>
+                </ul>
         </div>
         <div id="content">
             <h1>
                 搭建一个SSR的项目
             </h1>
             <h2>一.安装必要的依赖</h2>
-<pre><code>yarn add express react react-dom react-router-dom -S
+<pre class="hljs"><code>yarn add express react react-dom react-router-dom -S
 yarn add webpack webpack-cli webpack-merge babel-loader babel-preset-xin @babel/node @babel/cli -D
 </code></pre>
 <h2>二.文件夹说明</h2>
-<pre><code>|- public   //静态文件目录
+<pre class="hljs"><code>|- public   //静态文件目录
 |- config   //webpack的配置文件
     |-- webpack.base.babel.js', //公共配置文件
     |-- webpack.client.babel.js', //入口为client-render,打包客户端代码
@@ -62,49 +84,49 @@ yarn add webpack webpack-cli webpack-merge babel-loader babel-preset-xin @babel/
 <ul>
 <li>1.创建服务</li>
 </ul>
-<pre><code class="language-javascript">//index.js
-import express from 'express';
-import render from './src/ssr/render-middleware';
+<pre class="hljs"><code><span class="hljs-comment">//index.js</span>
+<span class="hljs-keyword">import</span> express <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;express&#x27;</span>;
+<span class="hljs-keyword">import</span> render <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./src/ssr/render-middleware&#x27;</span>;
 
-const server = express();
-server.use(express.static('public'));
-server.get('*', render());
+<span class="hljs-keyword">const</span> server = <span class="hljs-title function_">express</span>();
+server.<span class="hljs-title function_">use</span>(express.<span class="hljs-title function_">static</span>(<span class="hljs-string">&#x27;public&#x27;</span>));
+server.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;*&#x27;</span>, <span class="hljs-title function_">render</span>());
 
-server.listen(3000, () =&gt; {
-    console.log('server is running at http://localhost:3000');
+server.<span class="hljs-title function_">listen</span>(<span class="hljs-number">3000</span>, <span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;server is running at http://localhost:3000&#x27;</span>);
 });
 </code></pre>
 <ul>
 <li>2.编写路由中间件</li>
 </ul>
-<pre><code class="language-javascript">//render-middleware.js
+<pre class="hljs"><code><span class="hljs-comment">//render-middleware.js</span>
 
 </code></pre>
 <ul>
 <li>3.commonjs 不支持ES6的语法,index.js的代码也需要使用babel转译;</li>
 </ul>
-<pre><code class="language-javascript">//touch webpack.node.babel.js
+<pre class="hljs"><code><span class="hljs-comment">//touch webpack.node.babel.js</span>
 
-import path from 'path';
-import { merge } from 'webpack-merge';
-import defaultConfig from './webpack.base.babel';
-import nodeExternals from 'webpack-node-externals';
+<span class="hljs-keyword">import</span> path <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;path&#x27;</span>;
+<span class="hljs-keyword">import</span> { merge } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;webpack-merge&#x27;</span>;
+<span class="hljs-keyword">import</span> defaultConfig <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./webpack.base.babel&#x27;</span>;
+<span class="hljs-keyword">import</span> nodeExternals <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;webpack-node-externals&#x27;</span>;
 
-const _config = {
-    target: 'node',
-    entry: {
-        main: path.resolve(__dirname, '../index.js'),//main就是chunks.id
+<span class="hljs-keyword">const</span> _config = {
+    <span class="hljs-attr">target</span>: <span class="hljs-string">&#x27;node&#x27;</span>,
+    <span class="hljs-attr">entry</span>: {
+        <span class="hljs-attr">main</span>: path.<span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;../index.js&#x27;</span>),<span class="hljs-comment">//main就是chunks.id</span>
     },
-    output: {
-        path: path.resolve(__dirname, '../public/dist/server'),
-        filename: 'main.js',
+    <span class="hljs-attr">output</span>: {
+        <span class="hljs-attr">path</span>: path.<span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;../public/dist/server&#x27;</span>),
+        <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;main.js&#x27;</span>,
     },
-    //不用打包的模块
-    externals: ['@loadable/component', nodeExternals()],
+    <span class="hljs-comment">//不用打包的模块</span>
+    <span class="hljs-attr">externals</span>: [<span class="hljs-string">&#x27;@loadable/component&#x27;</span>, <span class="hljs-title function_">nodeExternals</span>()],
 }
 
-export default function (config) {
-    return merge(defaultConfig, _config);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> (<span class="hljs-params">config</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_">merge</span>(defaultConfig, _config);
 };
 </code></pre>
 
