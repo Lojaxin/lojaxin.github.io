@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react-native环境搭建</title>
+    <link rel="stylesheet" href="/public/css/index.css">
+    <link rel="stylesheet" href="/public/css/monokai-sublime.min.css">
+</head>
+
+<body>
+    <div id="root">
+        <div class="menu">
+            <div class="top">
+                不止于前端
+            </div>
+            <ul>
+                <li class="submenu">
+                    <a href=javacript:void(0);>
+                        nodejs
+                    </a>
+                    <ul>
+                <li class="submenu">
+                    <a href=/nodejs/常用内置模块.html>
+                        常用内置模块
+                    </a>
+                    
+                </li>
+                </ul>
+                </li>
+                
+                <li class="submenu">
+                    <a href=javacript:void(0);>
+                        webpack
+                    </a>
+                    <ul>
+                <li class="submenu">
+                    <a href=/webpack/搭建一个SPA的项目.html>
+                        搭建一个SPA的项目
+                    </a>
+                    
+                </li>
+                
+                <li class="submenu">
+                    <a href=/webpack/搭建一个SSR的项目.html>
+                        搭建一个SSR的项目
+                    </a>
+                    
+                </li>
+                </ul>
+                </li>
+                
+                <li class="submenu">
+                    <a href=javacript:void(0);>
+                        跨端
+                    </a>
+                    <ul>
+                <li class="submenu">
+                    <a href=/跨端/react-native环境搭建.html>
+                        react-native环境搭建
+                    </a>
+                    
+                </li>
+                </ul>
+                </li>
+                </ul>
+        </div>
+        <div id="content">
+            <h1>
+                react-native环境搭建
+            </h1>
+            <h4>一.选择开发环境(Mac)以及产品的运行环境(Iphone)</h4>
+<p>** 绝对不能使用 sudo命令来安装任何依赖 **</p>
+<p>1.Installing Ruby Gems一直处于loading阶段</p>
+<ul>
+<li><code>bundle config mirror.https://rubygems.org https://gems.ruby-china.com</code></li>
+<li>关闭vpm,重新初始化项目</li>
+</ul>
+<p>2.如果执行<code>sudo gem install cocoapods -V</code> 的报错是因为ruby版本,可以通过rbenv来实现版本管理</p>
+<ul>
+<li>brew install rbenv ruby-build</li>
+<li>rbenv init</li>
+<li>echo ‘eval “$(rbenv init - zsh)”’ &gt;&gt; ~/.zshrc</li>
+<li>rbenv install 2.7.6</li>
+<li>rbenv global 2.7.6</li>
+</ul>
+<p>3.安装cocoapods命令</p>
+<pre class="hljs"><code><span class="hljs-built_in">sudo</span> gem install -n /usr/local/bin cocoapods
+</code></pre>
+<p>4.新建项目</p>
+<pre class="hljs"><code>npx react-native init AwesomeProject
+</code></pre>
+<ul>
+<li>cd ~/.cocoapods/repos</li>
+<li>pod repo remove master</li>
+<li>git clone <a href="https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git">https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git</a> master</li>
+</ul>
+<p>5.运行 CocoaPods 安装命令
+cd MyRnApp/ios</p>
+<ul>
+<li>Podfile 文件第一行加上<code>source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'</code></li>
+<li>bundle install</li>
+<li>bundle exec pod install</li>
+</ul>
+<p>6.如果是某个.git文件clone不下来,需要用gitee替换;</p>
+<ul>
+<li>VSCode 编辑器，打开目录 ~/.cocoapods/repos/master。</li>
+<li>搜索无法安装的模块,如’<a href="http://github.com/facebook/flipper.git">github.com/facebook/flipper.git</a>’,用gitee替换;</li>
+</ul>
+<p>7.如果安装了nvm,需要遵守<a href="">官网文档</a>;</p>
+<ul>
+<li>将<code>~/.zshrc</code>文件中的将</li>
+</ul>
+<pre class="hljs"><code>    export NVM_DIR=&quot;$HOME/.nvm&quot;
+    [ -s &quot;$NVM_DIR/nvm.sh&quot; ] &amp;&amp; \. &quot;$NVM_DIR/nvm.sh&quot;  # This loads nvm
+</code></pre>
+<p>放到<code>~/.zshenv</code></p>
+<p>Errno::EACCES - Permission denied @ rb_sysopen - /Users/luojx/Library/Caches/CocoaPods/Pods/VERSION</p>
+<ul>
+<li>需要删除Caches中的CocoaPods</li>
+</ul>
+<p>有些命令前面千万不能加<code>sudo</code>,会出现权限的问题;</p>
+<p>Error installing OpenSSL-Universal [!] /usr/bin/curl -f -L -o</p>
+<ul>
+<li>直接按照报错信息去下载这个文件(有缓存),然后再执行<code> bundle exec pod install</code></li>
+</ul>
+<p>xcode 只能打开ios的文件夹信息,其他的打开会报错&quot;could not open file&quot;;</p>
+<p>鉴于 bundle exec pod install 安装依赖有时候 拉取代码时间会很长，我建议你第一次拉取成功后备份 ProjectRootDir/ios/Pods, 以后创建新项目可以直接复制到对应位置。删除 Pods.xcodeproj 重新执行 pod install --verbose 会新建这个文件，然后就可以愉快的 执行 yarn ios 继续开发代码了。对了不要使用 pnpm 去安装项目的 node 依赖。</p>
+<p>搭建参考
+<a href="https://time.geekbang.org/column/article/635210?code=FAqHFVRUur%2FgAP-yJQWitk9ieF80imRky3PVsIs%2FX6A%3D">极客</a>
+<a href="https://juejin.cn/post/7270332737835335714?searchId=20231116192346A2E66D3297EA645EA6B6">掘金</a>
+<a href="https://blog.csdn.net/weixin_46250314/article/details/133282633">CSDN</a></p>
+
+        </div>
+    </div>
+    <script src="/public/js/menu.js"></script>
+</body>
+
+</html>
